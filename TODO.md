@@ -1,0 +1,11 @@
+- config for shortcut to trigger the search HUD (change the shortcut)
+- keyboard nav in search UI (up/down/enter to run)
+- ergonomics in search (should autoselect first match, and run on enter)
+- custom icon
+- support background running of scripts (like setting up cron jobs basically, but in UI and conditionally like reminders maybe?)
+- open watched foldrs in finder in watchedfoldersview
+- browse discovered scripts
+- _favorite_ discovered scripts to show in menu bar dropdown
+- nicer menu bar context menu
+
+- might be nice to unit test the core logic harder as it expands
