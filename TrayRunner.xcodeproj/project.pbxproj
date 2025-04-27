@@ -6,8 +6,23 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B311E7A72DBDE5350036EEF5 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = B311E7A62DBDE5350036EEF5 /* KeyboardShortcuts */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B311E7862DBDD01E0036EEF5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B311E75E2DBDC6BC0036EEF5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B311E7652DBDC6BC0036EEF5;
+			remoteInfo = TrayRunner;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		B311E7662DBDC6BC0036EEF5 /* TrayRunner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrayRunner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311E7822DBDD01E0036EEF5 /* TrayRunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrayRunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +31,23 @@
 			path = TrayRunner;
 			sourceTree = "<group>";
 		};
+		B311E7832DBDD01E0036EEF5 /* TrayRunnerTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TrayRunnerTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B311E7632DBDC6BC0036EEF5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B311E7A72DBDE5350036EEF5 /* KeyboardShortcuts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B311E77F2DBDD01E0036EEF5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				B311E7682DBDC6BC0036EEF5 /* TrayRunner */,
+				B311E7832DBDD01E0036EEF5 /* TrayRunnerTests */,
 				B311E7672DBDC6BC0036EEF5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				B311E7662DBDC6BC0036EEF5 /* TrayRunner.app */,
+				B311E7822DBDD01E0036EEF5 /* TrayRunnerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -65,10 +95,34 @@
 			);
 			name = TrayRunner;
 			packageProductDependencies = (
+				B311E7A62DBDE5350036EEF5 /* KeyboardShortcuts */,
 			);
 			productName = TrayRunner;
 			productReference = B311E7662DBDC6BC0036EEF5 /* TrayRunner.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B311E7812DBDD01E0036EEF5 /* TrayRunnerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B311E7882DBDD01E0036EEF5 /* Build configuration list for PBXNativeTarget "TrayRunnerTests" */;
+			buildPhases = (
+				B311E77E2DBDD01E0036EEF5 /* Sources */,
+				B311E77F2DBDD01E0036EEF5 /* Frameworks */,
+				B311E7802DBDD01E0036EEF5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B311E7872DBDD01E0036EEF5 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B311E7832DBDD01E0036EEF5 /* TrayRunnerTests */,
+			);
+			name = TrayRunnerTests;
+			packageProductDependencies = (
+			);
+			productName = TrayRunnerTests;
+			productReference = B311E7822DBDD01E0036EEF5 /* TrayRunnerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -83,6 +137,10 @@
 					B311E7652DBDC6BC0036EEF5 = {
 						CreatedOnToolsVersion = 16.3;
 					};
+					B311E7812DBDD01E0036EEF5 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = B311E7652DBDC6BC0036EEF5;
+					};
 				};
 			};
 			buildConfigurationList = B311E7612DBDC6BC0036EEF5 /* Build configuration list for PBXProject "TrayRunner" */;
@@ -94,18 +152,29 @@
 			);
 			mainGroup = B311E75D2DBDC6BC0036EEF5;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B311E7A52DBDE5350036EEF5 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B311E7672DBDC6BC0036EEF5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				B311E7652DBDC6BC0036EEF5 /* TrayRunner */,
+				B311E7812DBDD01E0036EEF5 /* TrayRunnerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B311E7642DBDC6BC0036EEF5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B311E7802DBDD01E0036EEF5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +191,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B311E77E2DBDD01E0036EEF5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B311E7872DBDD01E0036EEF5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B311E7652DBDC6BC0036EEF5 /* TrayRunner */;
+			targetProxy = B311E7862DBDD01E0036EEF5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B311E7702DBDC6BD0036EEF5 /* Debug */ = {
@@ -258,6 +342,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -285,6 +370,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -296,6 +382,40 @@
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B311E7892DBDD01E0036EEF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 946S7A5C9X;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.arcadia.TrayRunnerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TrayRunner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TrayRunner";
+			};
+			name = Debug;
+		};
+		B311E78A2DBDD01E0036EEF5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 946S7A5C9X;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.arcadia.TrayRunnerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TrayRunner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TrayRunner";
 			};
 			name = Release;
 		};
@@ -320,7 +440,35 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B311E7882DBDD01E0036EEF5 /* Build configuration list for PBXNativeTarget "TrayRunnerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B311E7892DBDD01E0036EEF5 /* Debug */,
+				B311E78A2DBDD01E0036EEF5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B311E7A52DBDE5350036EEF5 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B311E7A62DBDE5350036EEF5 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B311E7A52DBDE5350036EEF5 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B311E75E2DBDC6BC0036EEF5 /* Project object */;
 }
