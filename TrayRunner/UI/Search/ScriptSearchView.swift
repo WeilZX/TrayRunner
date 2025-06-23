@@ -24,8 +24,8 @@ struct ScriptSearchView: View {
                     selectedIndex = 0
                 }
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        self.isSearchFieldFocused = true
+                    Task { @MainActor in
+                        isSearchFieldFocused = true
                     }
                 }
             
@@ -50,21 +50,6 @@ struct ScriptSearchView: View {
                         .id(index)
                     }
                     
-                    // Keyboard navigation controls
-                    .onKeyPress(.upArrow) {
-                        if selectedIndex > 0 {
-                            selectedIndex -= 1
-                            proxy.scrollTo(selectedIndex)
-                        }
-                        return .handled
-                    }
-                    .onKeyPress(.downArrow) {
-                        if selectedIndex < filteredScripts.count - 1 {
-                            selectedIndex += 1
-                            proxy.scrollTo(selectedIndex)
-                        }
-                        return .handled
-                    }
                     .onKeyPress(.return) {
                         if selectedIndex < filteredScripts.count {
                             Task {
@@ -72,8 +57,11 @@ struct ScriptSearchView: View {
                                 ScriptSearchHUD.shared.toggle()
                             }
                         }
+                        // Why did I put this here? // SCROLLIGN HERE!!!!
+                        proxy.scrollTo(selectedIndex)
                         return .handled
                     }
+                    
                 }
             }
         }
@@ -84,6 +72,37 @@ struct ScriptSearchView: View {
         .cornerRadius(12)
         .padding()
         
+        // Keyboard navigation controls
+        .onKeyPress(.upArrow) {
+            if selectedIndex > 0 {
+                selectedIndex -= 1
+            }
+            
+            return .handled
+        }
+        .onKeyPress(.downArrow) {
+            if selectedIndex < filteredScripts.count - 1{
+                selectedIndex += 1
+            }
+            return .handled
+        }
+        
+        // GLOBAL KEY HANDLING: Any other key refocuses search
+        .onKeyPress { keyPress in
+            // Arrow keys and return are handled above, so this catches everything else
+            if keyPress.key != .upArrow && keyPress.key != .downArrow && keyPress.key != .return && keyPress.key != .escape {
+                isSearchFieldFocused = true
+                // The typed character will automatically appear in the search field
+                return .ignored  // Let the system handle the character input
+            }
+            return .ignored
+        }
+        
+        // Escape functionality
+        .onKeyPress(.escape) {
+            ScriptSearchHUD.shared.toggle()
+            return .handled
+        }
     }
     
     private var filteredScripts: [ScriptItem] {
@@ -104,4 +123,3 @@ struct ScriptSearchView: View {
         }
     }
 }
-
