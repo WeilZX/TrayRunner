@@ -11,6 +11,7 @@ struct ScriptSearchView: View {
     @ObservedObject private var scriptManager = ScriptManager.shared
     @State private var searchText: String = ""
     @FocusState private var isSearchFieldFocused: Bool
+    @State private var selectedIndex: Int = 0
     
     var body: some View {
         VStack {
@@ -18,6 +19,10 @@ struct ScriptSearchView: View {
                 .textFieldStyle(.roundedBorder)
                 .padding()
                 .focused($isSearchFieldFocused)
+            // When user types something new, it reset selcetion to the first item
+                .onChange(of: searchText) { _, _ in
+                    selectedIndex = 0
+                }
                 .onAppear {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         self.isSearchFieldFocused = true
@@ -25,24 +30,55 @@ struct ScriptSearchView: View {
                 }
             
             if !filteredScripts.isEmpty {
-                List(filteredScripts) { script in
+                // Gives each script a number/index
+                List(Array(filteredScripts.enumerated()), id: \.offset) { index, script in
                     Button(action: {
                         Task {
-                            // intentional discard, we don't need the result
                             _ = try? await ScriptRunner.shared.runScript(at: script.url)
                             ScriptSearchHUD.shared.toggle()
                         }
                     }) {
                         Text(script.name)
                     }
+                    // Inside list - only item styling
                     .buttonStyle(.plain)
+                    .background(index == selectedIndex ? Color.accentColor.opacity(0.3) : Color.clear)
+                    .cornerRadius(4)
+                    
                 }
             }
         }
+        
+        // Outside VStack - whole window styling
         .frame(width: 600, height: 400)
         .background(VisualEffectBlur()) // Adds nice macOS blur
         .cornerRadius(12)
         .padding()
+        
+        // Keyboard navigation controls
+        .onKeyPress(.upArrow) {
+            if selectedIndex > 0 {
+                selectedIndex -= 1
+            }
+            return .handled
+        }
+        .onKeyPress(.downArrow) {
+            if selectedIndex < filteredScripts.count - 1 {
+                selectedIndex += 1
+            }
+            return .handled
+        }
+        .onKeyPress(.return) {
+            if selectedIndex < filteredScripts.count {
+                Task {
+                    _ = try? await ScriptRunner.shared.runScript(at: filteredScripts[selectedIndex].url)
+                    ScriptSearchHUD.shared.toggle()
+                }
+            }
+            return .handled
+        }
+        
+        
     }
     
     private var filteredScripts: [ScriptItem] {
