@@ -30,21 +30,50 @@ struct ScriptSearchView: View {
                 }
             
             if !filteredScripts.isEmpty {
+                
                 // Gives each script a number/index
-                List(Array(filteredScripts.enumerated()), id: \.offset) { index, script in
-                    Button(action: {
-                        Task {
-                            _ = try? await ScriptRunner.shared.runScript(at: script.url)
-                            ScriptSearchHUD.shared.toggle()
+                ScrollViewReader { proxy in
+                    List(Array(filteredScripts.enumerated()), id: \.offset) { index, script in
+                        Button(action: {
+                            Task {
+                                _ = try? await ScriptRunner.shared.runScript(at: script.url)
+                                ScriptSearchHUD.shared.toggle()
+                            }
+                        }) {
+                            Text(script.name)
                         }
-                    }) {
-                        Text(script.name)
+                        
+                        // Inside list - only item styling
+                        .buttonStyle(.plain)
+                        .background(index == selectedIndex ? Color.accentColor.opacity(0.3) : Color.clear)
+                        .cornerRadius(4)
+                        .id(index)
                     }
-                    // Inside list - only item styling
-                    .buttonStyle(.plain)
-                    .background(index == selectedIndex ? Color.accentColor.opacity(0.3) : Color.clear)
-                    .cornerRadius(4)
                     
+                    // Keyboard navigation controls
+                    .onKeyPress(.upArrow) {
+                        if selectedIndex > 0 {
+                            selectedIndex -= 1
+                            proxy.scrollTo(selectedIndex)
+                        }
+                        return .handled
+                    }
+                    .onKeyPress(.downArrow) {
+                        if selectedIndex < filteredScripts.count - 1 {
+                            selectedIndex += 1
+                            proxy.scrollTo(selectedIndex)
+                        }
+                        return .handled
+                    }
+                    .onKeyPress(.return) {
+                        if selectedIndex < filteredScripts.count {
+                            Task {
+                                _ = try? await ScriptRunner.shared.runScript(at: filteredScripts[selectedIndex].url)
+                                ScriptSearchHUD.shared.toggle()
+                            }
+                        }
+                        return .handled
+                    }
                 }
             }
         }
@@ -54,30 +83,6 @@ struct ScriptSearchView: View {
         .background(VisualEffectBlur()) // Adds nice macOS blur
         .cornerRadius(12)
         .padding()
-        
-        // Keyboard navigation controls
-        .onKeyPress(.upArrow) {
-            if selectedIndex > 0 {
-                selectedIndex -= 1
-            }
-            return .handled
-        }
-        .onKeyPress(.downArrow) {
-            if selectedIndex < filteredScripts.count - 1 {
-                selectedIndex += 1
-            }
-            return .handled
-        }
-        .onKeyPress(.return) {
-            if selectedIndex < filteredScripts.count {
-                Task {
-                    _ = try? await ScriptRunner.shared.runScript(at: filteredScripts[selectedIndex].url)
-                    ScriptSearchHUD.shared.toggle()
-                }
-            }
-            return .handled
-        }
-        
         
     }
     
