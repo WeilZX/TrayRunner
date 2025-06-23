@@ -19,7 +19,7 @@ struct ScriptSearchView: View {
                 .textFieldStyle(.roundedBorder)
                 .padding()
                 .focused($isSearchFieldFocused)
-            // When user types something new, it reset selcetion to the first item
+            // When user types something new, it reset selection to the first item
                 .onChange(of: searchText) { _, _ in
                     selectedIndex = 0
                 }
