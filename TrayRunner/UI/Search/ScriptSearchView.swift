@@ -12,6 +12,8 @@ struct ScriptSearchView: View {
     @State private var searchText: String = ""
     @FocusState private var isSearchFieldFocused: Bool
     @State private var selectedIndex: Int = 0
+    // target-based approach for scrolling functionality
+    @State private var scrollTarget: Int?
     
     var body: some View {
         VStack {
@@ -19,32 +21,55 @@ struct ScriptSearchView: View {
                 .textFieldStyle(.roundedBorder)
                 .padding()
                 .focused($isSearchFieldFocused)
-            // When user types something new, it reset selection to the first item
-                .onChange(of: searchText) { _, _ in
-                    selectedIndex = 0
+                .onChange(of: searchText) {
+                    selectedIndex = 0 // Reset selection to the first item
+                    scrollTarget = 0 // Scroll to top when search changes
                 }
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        self.isSearchFieldFocused = true
+                    Task { @MainActor in
+                        isSearchFieldFocused = true
                     }
                 }
             
             if !filteredScripts.isEmpty {
+                
                 // Gives each script a number/index
-                List(Array(filteredScripts.enumerated()), id: \.offset) { index, script in
-                    Button(action: {
-                        Task {
-                            _ = try? await ScriptRunner.shared.runScript(at: script.url)
-                            ScriptSearchHUD.shared.toggle()
+                ScrollViewReader { proxy in
+                    List(Array(filteredScripts.enumerated()), id: \.offset) { index, script in
+                        Button(action: {
+                            Task {
+                                _ = try? await ScriptRunner.shared.runScript(at: script.url)
+                                ScriptSearchHUD.shared.toggle()
+                            }
+                        }) {
+                            Text(script.name)
                         }
-                    }) {
-                        Text(script.name)
+                        
+                        // Inside list - only item styling
+                        .buttonStyle(.plain)
+                        .background(index == selectedIndex ? Color.accentColor.opacity(0.3) : Color.clear)
+                        .cornerRadius(4)
+                        .id(index)
                     }
-                    // Inside list - only item styling
-                    .buttonStyle(.plain)
-                    .background(index == selectedIndex ? Color.accentColor.opacity(0.3) : Color.clear)
-                    .cornerRadius(4)
                     
+                    .onKeyPress(.return) {
+                        if selectedIndex < filteredScripts.count {
+                            Task {
+                                _ = try? await ScriptRunner.shared.runScript(at: filteredScripts[selectedIndex].url)
+                                ScriptSearchHUD.shared.toggle()
+                            }
+                        }
+                        return .handled
+                    }
+                    
+                    .onChange(of: scrollTarget) {
+                        if let target = scrollTarget {
+                            scrollTarget = nil
+                            // Note: anchor: .top/.center/.bottom can be set up
+                            // Smooth scrolling can be implemented up to preference
+                            proxy.scrollTo(target)
+                        }
+                    }
                 }
             }
         }
@@ -59,26 +84,35 @@ struct ScriptSearchView: View {
         .onKeyPress(.upArrow) {
             if selectedIndex > 0 {
                 selectedIndex -= 1
+                scrollTarget = selectedIndex
             }
+            
             return .handled
         }
         .onKeyPress(.downArrow) {
-            if selectedIndex < filteredScripts.count - 1 {
+            if selectedIndex < filteredScripts.count - 1{
                 selectedIndex += 1
-            }
-            return .handled
-        }
-        .onKeyPress(.return) {
-            if selectedIndex < filteredScripts.count {
-                Task {
-                    _ = try? await ScriptRunner.shared.runScript(at: filteredScripts[selectedIndex].url)
-                    ScriptSearchHUD.shared.toggle()
-                }
+                scrollTarget = selectedIndex
             }
             return .handled
         }
         
+        // GLOBAL KEY HANDLING: Any other key refocuses search
+        .onKeyPress { keyPress in
+            // Arrow keys and return are handled above, so this catches everything else
+            if keyPress.key != .upArrow && keyPress.key != .downArrow && keyPress.key != .return && keyPress.key != .escape {
+                isSearchFieldFocused = true
+                // The typed character will automatically appear in the search field
+                return .ignored  // Let the system handle the character input
+            }
+            return .ignored
+        }
         
+        // Exit key
+        .onKeyPress(.escape) {
+            ScriptSearchHUD.shared.toggle()
+            return .handled
+        }
     }
     
     private var filteredScripts: [ScriptItem] {
@@ -99,4 +133,3 @@ struct ScriptSearchView: View {
         }
     }
 }
-
