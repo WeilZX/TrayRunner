@@ -21,8 +21,7 @@ struct ScriptSearchView: View {
                 .textFieldStyle(.roundedBorder)
                 .padding()
                 .focused($isSearchFieldFocused)
-            // When user types something new, it reset selection to the first item (both search index and scroll index/target)
-                .onChange(of: searchText) { _, _ in
+                .onChange(of: searchText) {
                     selectedIndex = 0 // Reset selection to the first item
                     scrollTarget = 0 // Scroll to top when search changes
                 }
@@ -109,7 +108,7 @@ struct ScriptSearchView: View {
             return .ignored
         }
         
-        // Escape functionality
+        // Exit key
         .onKeyPress(.escape) {
             ScriptSearchHUD.shared.toggle()
             return .handled
