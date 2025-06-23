@@ -12,6 +12,8 @@ struct ScriptSearchView: View {
     @State private var searchText: String = ""
     @FocusState private var isSearchFieldFocused: Bool
     @State private var selectedIndex: Int = 0
+    // target-based approach for scrolling functionality
+    @State private var scrollTarget: Int?
     
     var body: some View {
         VStack {
@@ -19,9 +21,10 @@ struct ScriptSearchView: View {
                 .textFieldStyle(.roundedBorder)
                 .padding()
                 .focused($isSearchFieldFocused)
-            // When user types something new, it reset selection to the first item
+            // When user types something new, it reset selection to the first item (both search index and scroll index/target)
                 .onChange(of: searchText) { _, _ in
-                    selectedIndex = 0
+                    selectedIndex = 0 // Reset selection to the first item
+                    scrollTarget = 0 // Scroll to top when search changes
                 }
                 .onAppear {
                     Task { @MainActor in
@@ -57,11 +60,17 @@ struct ScriptSearchView: View {
                                 ScriptSearchHUD.shared.toggle()
                             }
                         }
-                        // Why did I put this here? // SCROLLIGN HERE!!!!
-                        proxy.scrollTo(selectedIndex)
                         return .handled
                     }
                     
+                    .onChange(of: scrollTarget) {
+                        if let target = scrollTarget {
+                            scrollTarget = nil
+                            // Note: anchor: .top/.center/.bottom can be set up
+                            // Smooth scrolling can be implemented up to preference
+                            proxy.scrollTo(target)
+                        }
+                    }
                 }
             }
         }
@@ -76,6 +85,7 @@ struct ScriptSearchView: View {
         .onKeyPress(.upArrow) {
             if selectedIndex > 0 {
                 selectedIndex -= 1
+                scrollTarget = selectedIndex
             }
             
             return .handled
@@ -83,6 +93,7 @@ struct ScriptSearchView: View {
         .onKeyPress(.downArrow) {
             if selectedIndex < filteredScripts.count - 1{
                 selectedIndex += 1
+                scrollTarget = selectedIndex
             }
             return .handled
         }
