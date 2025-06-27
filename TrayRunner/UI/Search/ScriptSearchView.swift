@@ -7,13 +7,19 @@
 
 import SwiftUI
 
+
+
 struct ScriptSearchView: View {
     @ObservedObject private var scriptManager = ScriptManager.shared
     @State private var searchText: String = ""
     @FocusState private var isSearchFieldFocused: Bool
-    @State private var selectedIndex: Int = 0
-    // target-based approach for scrolling functionality
-    @State private var scrollTarget: Int?
+    
+    @StateObject private var navigationManager = ScriptSearchNavigationManager()
+    
+    // Why are we adding this?
+    internal var testableNavigationManager: ScriptSearchNavigationManager {
+        return navigationManager
+    }
     
     var body: some View {
         VStack {
@@ -22,8 +28,9 @@ struct ScriptSearchView: View {
                 .padding()
                 .focused($isSearchFieldFocused)
                 .onChange(of: searchText) {
-                    selectedIndex = 0 // Reset selection to the first item
-                    scrollTarget = 0 // Scroll to top when search changes
+                    Task { @MainActor in
+                        navigationManager.resetForNewSearch()
+                    }
                 }
                 .onAppear {
                     Task { @MainActor in
@@ -47,27 +54,30 @@ struct ScriptSearchView: View {
                         
                         // Inside list - only item styling
                         .buttonStyle(.plain)
-                        .background(index == selectedIndex ? Color.accentColor.opacity(0.3) : Color.clear)
+                        .background(index == navigationManager.selectedIndex ? Color.accentColor.opacity(0.3) : Color.clear)
                         .cornerRadius(4)
                         .id(index)
                     }
                     
                     .onKeyPress(.return) {
-                        if selectedIndex < filteredScripts.count {
+                        if navigationManager.selectedIndex < filteredScripts.count {
                             Task {
-                                _ = try? await ScriptRunner.shared.runScript(at: filteredScripts[selectedIndex].url)
+                                _ = try? await ScriptRunner.shared.runScript(at: filteredScripts[navigationManager.selectedIndex].url)
                                 ScriptSearchHUD.shared.toggle()
                             }
                         }
                         return .handled
                     }
                     
-                    .onChange(of: scrollTarget) {
-                        if let target = scrollTarget {
-                            scrollTarget = nil
+                    .onChange(of: navigationManager.scrollTarget) {
+                        if let target = navigationManager.scrollTarget {
+                            proxy.scrollTo(target)
+                            Task { @MainActor in
+                                navigationManager.clearScrollTarget()
+                            }
                             // Note: anchor: .top/.center/.bottom can be set up
                             // Smooth scrolling can be implemented up to preference
-                            proxy.scrollTo(target)
+                            
                         }
                     }
                 }
@@ -81,18 +91,19 @@ struct ScriptSearchView: View {
         .padding()
         
         // Keyboard navigation controls
+        
+        // Move up
         .onKeyPress(.upArrow) {
-            if selectedIndex > 0 {
-                selectedIndex -= 1
-                scrollTarget = selectedIndex
+            Task { @MainActor in
+                navigationManager.moveUp()
             }
-            
             return .handled
         }
+        
+        // Move down
         .onKeyPress(.downArrow) {
-            if selectedIndex < filteredScripts.count - 1{
-                selectedIndex += 1
-                scrollTarget = selectedIndex
+            Task { @MainActor in
+                navigationManager.moveDown(maxIndex: filteredScripts.count - 1)
             }
             return .handled
         }
@@ -108,12 +119,15 @@ struct ScriptSearchView: View {
             return .ignored
         }
         
-        // Exit key
+        // Exit key and Reset search
         .onKeyPress(.escape) {
             ScriptSearchHUD.shared.toggle()
+            // Triggers onChange which calls resetForNewSearch
+            searchText = ""
             return .handled
         }
     }
+    
     
     private var filteredScripts: [ScriptItem] {
         if searchText.isEmpty {
@@ -133,3 +147,4 @@ struct ScriptSearchView: View {
         }
     }
 }
+
