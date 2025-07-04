@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct ScriptSearchView: View {
     @ObservedObject private var scriptManager = ScriptManager.shared
     @State private var searchText: String = ""
@@ -16,7 +14,7 @@ struct ScriptSearchView: View {
     
     @StateObject private var navigationManager = ScriptSearchNavigationManager()
     
-    // Why are we adding this?
+    // For Unit testing purposes
     internal var testableNavigationManager: ScriptSearchNavigationManager {
         return navigationManager
     }
@@ -59,16 +57,6 @@ struct ScriptSearchView: View {
                         .id(index)
                     }
                     
-                    .onKeyPress(.return) {
-                        if navigationManager.selectedIndex < filteredScripts.count {
-                            Task {
-                                _ = try? await ScriptRunner.shared.runScript(at: filteredScripts[navigationManager.selectedIndex].url)
-                                ScriptSearchHUD.shared.toggle()
-                            }
-                        }
-                        return .handled
-                    }
-                    
                     .onChange(of: navigationManager.scrollTarget) {
                         if let target = navigationManager.scrollTarget {
                             proxy.scrollTo(target)
@@ -108,6 +96,22 @@ struct ScriptSearchView: View {
             return .handled
         }
         
+        // Enter key handler moved to VStack level to catch keypress regardless of focus
+        // (TextField has focus, but VStack can still intercept Enter key events)
+        // Execute Script
+        .onKeyPress(.return) {
+            // Focus on the list here
+            if navigationManager.selectedIndex < filteredScripts.count {
+                Task {
+                    _ = try? await ScriptRunner.shared.runScript(at: filteredScripts[navigationManager.selectedIndex].url)
+                    ScriptSearchHUD.shared.toggle()
+                    // I would be wary of this
+                    clearSearchText()
+                }
+            }
+            return .handled
+        }
+        
         // GLOBAL KEY HANDLING: Any other key refocuses search
         .onKeyPress { keyPress in
             // Arrow keys and return are handled above, so this catches everything else
@@ -123,11 +127,15 @@ struct ScriptSearchView: View {
         .onKeyPress(.escape) {
             ScriptSearchHUD.shared.toggle()
             // Triggers onChange which calls resetForNewSearch
-            searchText = ""
+            clearSearchText()
             return .handled
         }
     }
     
+    private func clearSearchText() {
+        
+        searchText = ""
+    }
     
     private var filteredScripts: [ScriptItem] {
         if searchText.isEmpty {
@@ -147,4 +155,3 @@ struct ScriptSearchView: View {
         }
     }
 }
-
