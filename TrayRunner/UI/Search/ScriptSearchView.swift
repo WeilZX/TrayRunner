@@ -155,4 +155,3 @@ struct ScriptSearchView: View {
         }
     }
 }
-

@@ -5,14 +5,10 @@
 //  Created by admin on 26/06/2025.
 //
 
-// For every comment that starts with "Question:" It must be addressed then deleted
-
 import Foundation
 
 // Seperating the navigation logic from UI
 
-// What is an observableObject
-// What is Published as opposed to private internal or public
 class ScriptSearchNavigationManager: ObservableObject {
     @Published var selectedIndex: Int = 0
     @Published var scrollTarget: Int? = nil
