@@ -1,1 +1,8 @@
 *.xcuserstate
+*.DS_Store
+
+TrayRunner/UI/.DS_Store
+.DS_Store
+.DS_Store?
+**/.DS_Store
+**/.DS_Store?
