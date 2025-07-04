@@ -11,12 +11,10 @@ import Foundation
 
 class ScriptSearchNavigationManager: ObservableObject {
     @Published var selectedIndex: Int = 0
-    @Published var scrollTarget: Int? = nil
     
     func moveDown(maxIndex: Int) -> Bool {
         if selectedIndex < maxIndex {
             selectedIndex += 1
-            scrollTarget = selectedIndex  // This will trigger UI update
             return true
         }
         return false
@@ -25,7 +23,6 @@ class ScriptSearchNavigationManager: ObservableObject {
     func moveUp() -> Bool {
         if selectedIndex > 0 {
             selectedIndex -= 1
-            scrollTarget = selectedIndex  // This will trigger UI update
             return true
         }
         return false
@@ -33,7 +30,6 @@ class ScriptSearchNavigationManager: ObservableObject {
     
     func resetForNewSearch() {
         selectedIndex = 0
-        scrollTarget = 0  // This will trigger scroll to top
     }
     
     
@@ -46,8 +42,4 @@ class ScriptSearchNavigationManager: ObservableObject {
         return selectedIndex > 0
     }
     
-    // Internal method for tests to set scrollTarget to nil
-    internal func clearScrollTarget() {
-        scrollTarget = nil
-    }
 }

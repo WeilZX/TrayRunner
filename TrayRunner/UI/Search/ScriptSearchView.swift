@@ -56,18 +56,6 @@ struct ScriptSearchView: View {
                         .cornerRadius(4)
                         .id(index)
                     }
-                    
-                    .onChange(of: navigationManager.scrollTarget) {
-                        if let target = navigationManager.scrollTarget {
-                            proxy.scrollTo(target)
-                            Task { @MainActor in
-                                navigationManager.clearScrollTarget()
-                            }
-                            // Note: anchor: .top/.center/.bottom can be set up
-                            // Smooth scrolling can be implemented up to preference
-                            
-                        }
-                    }
                 }
             }
         }
