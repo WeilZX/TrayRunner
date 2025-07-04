@@ -30,6 +30,7 @@ class ScriptSearchViewTests: XCTestCase {
     
     func testInitialState() {
         XCTAssertEqual(navigationManager.selectedIndex, 0, "Initial selected index should be 0")
+        XCTAssertNil(navigationManager.scrollTarget, "Initial scroll target should be nil")
     }
     
     // MARK: - Navigation Tests
@@ -41,6 +42,7 @@ class ScriptSearchViewTests: XCTestCase {
         
         XCTAssertTrue(didMoveDown, "Should be able to move down from index 0")
         XCTAssertEqual(navigationManager.selectedIndex, 1, "Selected index should be 1 after moving down")
+        XCTAssertEqual(navigationManager.scrollTarget, 1, "Scroll target should be 1 after moving down")
     }
     
     func testMoveDownAtLimit() {
@@ -52,6 +54,7 @@ class ScriptSearchViewTests: XCTestCase {
         
         XCTAssertFalse(didMoveDown, "Should not be able to move down when at bottom limit")
         XCTAssertEqual(navigationManager.selectedIndex, 2, "Selected index should remain 2")
+        XCTAssertNil(navigationManager.scrollTarget, "Scroll target should remain nil when move fails")
     }
     
     func testMoveUpSuccess() {
@@ -62,6 +65,7 @@ class ScriptSearchViewTests: XCTestCase {
         
         XCTAssertTrue(didMoveUp, "Should be able to move up from index 1")
         XCTAssertEqual(navigationManager.selectedIndex, 0, "Selected index should be 0 after moving up")
+        XCTAssertEqual(navigationManager.scrollTarget, 0, "Scroll target should be 0 after moving up")
     }
     
     func testMoveUpAtLimit() {
@@ -70,6 +74,7 @@ class ScriptSearchViewTests: XCTestCase {
         
         XCTAssertFalse(didMoveUp, "Should not be able to move up when at top limit")
         XCTAssertEqual(navigationManager.selectedIndex, 0, "Selected index should remain 0")
+        XCTAssertNil(navigationManager.scrollTarget, "Scroll target should remain nil when move fails")
     }
     
     // MARK: - Navigation Chain Tests
@@ -101,11 +106,13 @@ class ScriptSearchViewTests: XCTestCase {
     func testResetForNewSearch() {
         // Set navigation to some non-initial state
         navigationManager.selectedIndex = 5
+        navigationManager.scrollTarget = 3
         
         // Reset
         navigationManager.resetForNewSearch()
         
         XCTAssertEqual(navigationManager.selectedIndex, 0, "Selected index should reset to 0")
+        XCTAssertEqual(navigationManager.scrollTarget, 0, "Scroll target should be set to 0 for scrolling to top")
     }
     
     // MARK: - Helper Method Tests
@@ -129,6 +136,52 @@ class ScriptSearchViewTests: XCTestCase {
         navigationManager.selectedIndex = 1
         XCTAssertTrue(navigationManager.canMoveUp(), "Should be able to move up from index 1")
     }
+    
+    // MARK: - Scroll Target Management Tests
+    
+    func testClearScrollTarget() {
+        // Set scroll target
+        navigationManager.scrollTarget = 5
+        XCTAssertEqual(navigationManager.scrollTarget, 5, "Scroll target should be set")
+        
+        // Clear it
+        navigationManager.clearScrollTarget()
+        XCTAssertNil(navigationManager.scrollTarget, "Scroll target should be cleared")
+    }
 
-
+//    // MARK: - Edge Case Tests
+//    
+//    func testNavigationWithEmptyList() {
+//        // Test with maxIndex = -1 (empty list)
+//        // Todo why -1?
+//        let maxIndex = -1
+//        
+//        let didMoveDown = navigationManager.moveDown(maxIndex: maxIndex)
+//        XCTAssertFalse(didMoveDown, "Should not be able to move down in empty list")
+//        XCTAssertEqual(navigationManager.selectedIndex, 0, "Selected index should remain 0")
+//    }
+//    
+//    func testNavigationWithSingleItem() {
+//        // Test with maxIndex = 0 (single item)
+//        let maxIndex = 0
+//        
+//        let didMoveDown = navigationManager.moveDown(maxIndex: maxIndex)
+//        XCTAssertFalse(didMoveDown, "Should not be able to move down in single-item list")
+//        XCTAssertEqual(navigationManager.selectedIndex, 0, "Selected index should remain 0")
+//    }
+//    
+//    // MARK: - Integration Tests
+//    
+//    func testNavigationManagerIntegrationWithView() {
+//        // Test that the view correctly exposes the navigation manager
+//        XCTAssertNotNil(searchView.testableNavigationManager, "View should expose navigation manager for testing")
+//        
+//        // Test that operations work through the view's manager
+//        let manager = searchView.testableNavigationManager
+//        let originalIndex = manager.selectedIndex
+//        
+//        _ = manager.moveDown(maxIndex: 5)
+//        XCTAssertNotEqual(manager.selectedIndex, originalIndex, "Navigation should work through view's manager")
+//    }
+    
 }
