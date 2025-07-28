@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  TrayRunner
 //
-//  Created by admin on 30/06/2025.
+//  Created by Weil on 30/06/2025.
 //
 
 import AppKit
@@ -13,11 +13,11 @@ class TrayRunnerMenu: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var settingsWindow: NSWindow?
     
-    // Preserve ScriptManager reference
     private var scriptManager = ScriptManager.shared
     
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        // Setup keyboard shortcuts (from your original TrayRunnerApp)
+    func onLaunchFinish(_ notification: Notification) {
+        
+        // Setup keyboard shortcuts
         setupKeyboardShortcuts()
         
         // Create status bar item
@@ -83,7 +83,7 @@ class TrayRunnerMenu: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
     }
     
-    // Keyboard shortcuts from your original TrayRunnerApp
+    
     private func setupKeyboardShortcuts() {
         KeyboardShortcuts.onKeyUp(for: .showScriptSearch) {
             ScriptSearchHUD.shared.toggle()
